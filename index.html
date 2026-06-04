@@ -3,877 +3,501 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sport Sight — See Further. Move Faster.</title>
+  <title>Sport Sight — Performance Eyewear</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --black: #0a0a0a;
-      --white: #f8f8f8;
-      --mid: #888;
-      --border: rgba(255,255,255,0.1);
-      --font-display: 'Bebas Neue', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
+      --black: #060606;
+      --off-black: #0e0e0e;
+      --white: #f5f5f0;
+      --cream: #ece9e0;
+      --gold: #c8a96e;
+      --mid: #6a6a6a;
+      --border: rgba(255,255,255,0.07);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-serif: 'Cormorant Garamond', serif;
+      --font-body: 'Barlow', sans-serif;
     }
-
     html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); overflow-x: hidden; cursor: none; }
 
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--font-body);
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* CUSTOM CURSOR */
-    .cursor {
-      position: fixed;
-      width: 10px; height: 10px;
-      background: var(--white);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
-      mix-blend-mode: difference;
-    }
-    .cursor-ring {
-      position: fixed;
-      width: 36px; height: 36px;
-      border: 1px solid rgba(255,255,255,0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-    }
-    body:has(a:hover) .cursor-ring,
-    body:has(button:hover) .cursor-ring { width: 56px; height: 56px; opacity: 0.6; }
+    /* CURSOR */
+    #cur { position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s; }
+    #cur2 { position:fixed;width:32px;height:32px;border:1px solid rgba(255,255,255,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s,opacity .3s; }
+    body:has(a:hover) #cur2, body:has(button:hover) #cur2 { width:50px;height:50px;opacity:.5; }
 
     /* NAV */
     nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 48px;
-      backdrop-filter: blur(20px);
-      background: rgba(10,10,10,0.7);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.3s;
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 56px;height:72px;
+      background:rgba(6,6,6,0.85);
+      backdrop-filter:blur(24px);
+      border-bottom:1px solid var(--border);
+      transition:background .4s;
     }
-    .nav-logo img { height: 36px; filter: invert(0); }
-    .nav-links { display: flex; gap: 36px; list-style: none; }
-    .nav-links a {
-      color: var(--mid);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
+    .nav-logo img { height:34px; }
+    .nav-links { display:flex;gap:40px;list-style:none; }
+    .nav-links a { color:var(--mid);text-decoration:none;font-family:var(--font-display);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;transition:color .2s; }
+    .nav-links a:hover { color:var(--white); }
+    .nav-right { display:flex;align-items:center;gap:24px; }
+    .price-tag { font-family:var(--font-serif);font-size:14px;color:var(--gold);letter-spacing:.05em; }
+    .btn-nav {
+      background:transparent;border:1px solid rgba(255,255,255,0.25);color:var(--white);
+      padding:10px 28px;font-family:var(--font-display);font-size:11px;font-weight:600;
+      letter-spacing:.2em;text-transform:uppercase;cursor:none;text-decoration:none;
+      display:inline-block;transition:all .3s;
     }
-    .nav-links a:hover { color: var(--white); }
-    .nav-cta {
-      background: var(--white);
-      color: var(--black);
-      border: none;
-      padding: 10px 24px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: none;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .nav-cta:hover { background: #ddd; transform: scale(1.03); }
+    .btn-nav:hover { background:var(--white);color:var(--black); }
 
     /* HERO */
     .hero {
-      height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      padding: 0 24px;
+      height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;position:relative;overflow:hidden;
     }
     .hero-bg {
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 60%, #1a1a1a 0%, var(--black) 70%);
+      position:absolute;inset:0;
+      background: radial-gradient(ellipse 100% 80% at 50% 70%, #141414 0%, #060606 65%);
     }
-    .hero-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
+    .hero-vignette {
+      position:absolute;inset:0;
+      background: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 30%, rgba(0,0,0,.8) 100%);
+      z-index:1;
     }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 8px 18px;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--mid);
-      margin-bottom: 32px;
-      position: relative; z-index: 1;
-      animation: fadeUp 1s ease both;
+    .hero-line-left, .hero-line-right {
+      position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(to bottom, transparent, rgba(255,255,255,.05) 30%, rgba(255,255,255,.05) 70%, transparent);
     }
-    .hero-badge span { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-line-left { left:15%; } .hero-line-right { right:15%; }
+
+    .hero-content { position:relative;z-index:2;display:flex;flex-direction:column;align-items:center; }
+    .hero-eyebrow {
+      display:flex;align-items:center;gap:12px;
+      font-family:var(--font-display);font-size:11px;font-weight:500;
+      letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
+      margin-bottom:32px;
+      animation:fadeUp 1.2s ease both;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after { content:'';width:40px;height:1px;background:var(--gold);opacity:.5; }
+
     .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(72px, 12vw, 160px);
-      line-height: 0.9;
-      letter-spacing: 0.02em;
-      position: relative; z-index: 1;
-      animation: fadeUp 1s 0.1s ease both;
+      font-family:var(--font-display);
+      font-size:clamp(80px, 13vw, 180px);
+      font-weight:800;
+      line-height:.88;
+      letter-spacing:-.01em;
+      text-transform:uppercase;
+      animation:fadeUp 1.2s .1s ease both;
     }
-    .hero h1 em {
-      font-style: normal;
-      -webkit-text-stroke: 1px var(--white);
-      color: transparent;
+    .hero h1 .outline { -webkit-text-stroke:1.5px var(--white);color:transparent; }
+
+    .hero-product {
+      position:relative;width:700px;max-width:90vw;margin:48px 0 32px;
+      animation:fadeUp 1.2s .2s ease both;
     }
+    .hero-product img { width:100%;filter:drop-shadow(0 40px 80px rgba(0,100,200,.15)) drop-shadow(0 0 40px rgba(0,0,0,.8)); }
+
     .hero-sub {
-      font-size: clamp(15px, 2vw, 20px);
-      font-weight: 300;
-      color: var(--mid);
-      max-width: 520px;
-      line-height: 1.6;
-      margin-top: 24px;
-      position: relative; z-index: 1;
-      animation: fadeUp 1s 0.2s ease both;
+      font-family:var(--font-serif);font-style:italic;
+      font-size:clamp(16px,2vw,22px);color:rgba(255,255,255,.45);
+      letter-spacing:.05em;margin-bottom:48px;
+      animation:fadeUp 1.2s .3s ease both;
     }
-    .hero-actions {
-      display: flex; gap: 16px;
-      margin-top: 48px;
-      position: relative; z-index: 1;
-      animation: fadeUp 1s 0.3s ease both;
-    }
+    .hero-actions { display:flex;gap:16px;animation:fadeUp 1.2s .4s ease both; }
     .btn-primary {
-      background: var(--white);
-      color: var(--black);
-      border: none;
-      padding: 16px 40px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: none;
-      transition: transform 0.2s, background 0.2s;
+      background:var(--white);color:var(--black);border:none;
+      padding:18px 48px;font-family:var(--font-display);font-size:12px;font-weight:700;
+      letter-spacing:.22em;text-transform:uppercase;cursor:none;text-decoration:none;
+      display:inline-block;transition:all .3s;
     }
-    .btn-primary:hover { background: #e0e0e0; transform: scale(1.04); }
-    .btn-secondary {
-      background: transparent;
-      color: var(--white);
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 16px 40px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: none;
-      text-decoration: none;
-      display: flex; align-items: center;
-      transition: border-color 0.2s, background 0.2s;
+    .btn-primary:hover { background:var(--cream);transform:translateY(-2px); }
+    .btn-ghost {
+      background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.2);
+      padding:18px 48px;font-family:var(--font-display);font-size:12px;font-weight:500;
+      letter-spacing:.22em;text-transform:uppercase;cursor:none;text-decoration:none;
+      display:inline-block;transition:all .3s;
     }
-    .btn-secondary:hover { border-color: var(--white); background: rgba(255,255,255,0.05); }
+    .btn-ghost:hover { border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.04); }
 
-    /* HERO PRODUCT IMAGE */
-    .hero-image {
-      position: relative; z-index: 1;
-      margin-top: 64px;
-      animation: fadeUp 1s 0.4s ease both;
-      width: 100%; max-width: 900px;
+    .hero-scroll {
+      position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+      display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;
+      animation:fadeUp 1.2s 1s ease both;
     }
-    .hero-image-placeholder {
-      width: 100%;
-      aspect-ratio: 16/7;
-      background: linear-gradient(135deg, #1c1c1c 0%, #111 40%, #1a1a1a 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-image-placeholder::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%);
-    }
-    .placeholder-icon { font-size: 48px; opacity: 0.3; }
-    .placeholder-text { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: #555; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* SCROLL INDICATOR */
-    .scroll-hint {
-      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      z-index: 1;
-      animation: fadeUp 1s 1s ease both;
-    }
-    .scroll-hint span { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #444; }
-    .scroll-line {
-      width: 1px; height: 48px;
-      background: linear-gradient(to bottom, #444, transparent);
-      animation: scrollAnim 2s ease infinite;
-    }
-    @keyframes scrollAnim { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(0.5);opacity:0.4} }
+    .hero-scroll span { font-family:var(--font-display);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:#333; }
+    .scroll-bar { width:1px;height:56px;background:linear-gradient(to bottom, #333, transparent);animation:scrollPulse 2.5s ease infinite; }
+    @keyframes scrollPulse { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(.4);opacity:.3} }
 
     /* MARQUEE */
-    .marquee-section {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 18px 0;
-      overflow: hidden;
-      background: var(--black);
+    .marquee-wrap { overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;background:#080808; }
+    .marquee-track { display:flex;gap:0;animation:marquee 25s linear infinite;white-space:nowrap; }
+    .marquee-track .item { font-family:var(--font-display);font-size:11px;font-weight:500;letter-spacing:.25em;text-transform:uppercase;color:#2a2a2a;padding:0 40px; }
+    .marquee-track .dot { color:var(--gold);opacity:.6;font-size:8px; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* PRODUCT INTRO */
+    .intro { padding:160px 56px;max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:120px;align-items:center; }
+    .intro-visual { position:relative; }
+    .intro-img-wrap {
+      aspect-ratio:1;background:linear-gradient(135deg,#111 0%,#0a0a0a 100%);
+      border:1px solid var(--border);position:relative;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
     }
-    .marquee-track {
-      display: flex; gap: 64px;
-      animation: marquee 20s linear infinite;
-      white-space: nowrap;
+    .intro-img-wrap img { width:90%;filter:drop-shadow(0 20px 60px rgba(0,80,180,.2)); }
+    .intro-img-wrap::before {
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,255,255,.03), transparent 70%);
     }
-    .marquee-track span {
-      font-family: var(--font-display);
-      font-size: 14px;
-      letter-spacing: 0.2em;
-      color: #333;
-      text-transform: uppercase;
+    .intro-tag {
+      position:absolute;bottom:-1px;left:-1px;
+      background:var(--gold);color:var(--black);
+      font-family:var(--font-display);font-size:10px;font-weight:700;
+      letter-spacing:.2em;text-transform:uppercase;padding:10px 20px;
     }
-    .marquee-track .dot { color: var(--white); }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .intro-text .section-label {
+      font-family:var(--font-display);font-size:10px;font-weight:600;
+      letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;
+    }
+    .intro-text h2 {
+      font-family:var(--font-display);font-size:clamp(48px,5vw,72px);font-weight:800;
+      line-height:.95;text-transform:uppercase;margin-bottom:28px;
+    }
+    .intro-text h2 em { font-style:normal;-webkit-text-stroke:1px var(--white);color:transparent; }
+    .intro-text .lead {
+      font-family:var(--font-serif);font-style:italic;font-size:20px;
+      color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:24px;
+    }
+    .intro-text p { font-size:14px;color:var(--mid);line-height:1.9;font-weight:300;margin-bottom:32px; }
+    .price-display {
+      display:flex;align-items:baseline;gap:12px;margin-bottom:40px;
+      padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    }
+    .price-from { font-family:var(--font-display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid); }
+    .price-amount { font-family:var(--font-display);font-size:56px;font-weight:800;color:var(--white);line-height:1; }
+    .price-note { font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--gold); }
 
     /* FEATURES */
-    .features {
-      padding: 160px 48px;
-      max-width: 1200px;
-      margin: 0 auto;
+    .features-section { padding:120px 56px;border-top:1px solid var(--border); }
+    .features-header { text-align:center;max-width:600px;margin:0 auto 80px; }
+    .features-header .section-label { font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px; }
+    .features-header h2 { font-family:var(--font-display);font-size:clamp(48px,5vw,72px);font-weight:800;line-height:.95;text-transform:uppercase; }
+    .features-header h2 em { font-style:normal;-webkit-text-stroke:1px var(--white);color:transparent; }
+    .features-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);max-width:1200px;margin:0 auto; }
+    .feat-card {
+      background:var(--off-black);padding:52px 44px;position:relative;overflow:hidden;
+      transition:background .3s;
     }
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--mid);
-      margin-bottom: 24px;
+    .feat-card:hover { background:#111; }
+    .feat-card::after {
+      content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+      transform:scaleX(0);transform-origin:left;transition:transform .5s ease;
     }
-    .features-headline {
-      font-family: var(--font-display);
-      font-size: clamp(48px, 6vw, 80px);
-      line-height: 1;
-      letter-spacing: 0.02em;
-      max-width: 700px;
-      margin-bottom: 80px;
-    }
-    .features-headline em { font-style: normal; -webkit-text-stroke: 1px var(--white); color: transparent; }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-    .feature-card {
-      background: var(--black);
-      padding: 48px 40px;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.3s;
-    }
-    .feature-card:hover { background: #111; }
-    .feature-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--white);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s ease;
-    }
-    .feature-card:hover::after { transform: scaleX(1); }
-    .feature-num {
-      font-family: var(--font-display);
-      font-size: 64px;
-      color: rgba(255,255,255,0.06);
-      line-height: 1;
-      margin-bottom: 24px;
-    }
-    .feature-icon { font-size: 28px; margin-bottom: 20px; }
-    .feature-title {
-      font-family: var(--font-display);
-      font-size: 28px;
-      letter-spacing: 0.05em;
-      margin-bottom: 12px;
-    }
-    .feature-desc {
-      font-size: 14px;
-      color: var(--mid);
-      line-height: 1.7;
-      font-weight: 300;
-    }
+    .feat-card:hover::after { transform:scaleX(1); }
+    .feat-num { font-family:var(--font-display);font-size:72px;font-weight:800;color:rgba(255,255,255,.04);line-height:1;position:absolute;top:24px;right:24px; }
+    .feat-icon { font-size:24px;margin-bottom:24px;display:block; }
+    .feat-title { font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px; }
+    .feat-desc { font-size:13px;color:var(--mid);line-height:1.8;font-weight:300; }
 
-    /* PRODUCT SHOWCASE */
-    .showcase {
-      padding: 120px 48px;
-      background: #080808;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    /* SPECS */
+    .specs-section { padding:120px 56px;background:#070707;border-top:1px solid var(--border); }
+    .specs-inner { max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start; }
+    .specs-left .section-label { font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px; }
+    .specs-left h2 { font-family:var(--font-display);font-size:clamp(40px,4vw,60px);font-weight:800;line-height:.95;text-transform:uppercase;margin-bottom:32px; }
+    .specs-left p { font-size:14px;color:var(--mid);line-height:1.9;font-weight:300;max-width:420px; }
+    .specs-table { margin-top:0; }
+    .spec-row {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:18px 0;border-bottom:1px solid var(--border);
     }
-    .showcase-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-    }
-    .showcase-text .section-label { margin-bottom: 16px; }
-    .showcase-text h2 {
-      font-family: var(--font-display);
-      font-size: clamp(40px, 5vw, 72px);
-      line-height: 1;
-      margin-bottom: 24px;
-    }
-    .showcase-text p {
-      font-size: 16px;
-      color: var(--mid);
-      line-height: 1.8;
-      font-weight: 300;
-      margin-bottom: 16px;
-    }
-    .spec-list { margin-top: 40px; display: flex; flex-direction: column; gap: 0; }
-    .spec-item {
-      display: flex; justify-content: space-between;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-    .spec-item .spec-name { color: var(--mid); letter-spacing: 0.05em; }
-    .spec-item .spec-val { font-weight: 500; }
-    .showcase-visual {
-      aspect-ratio: 1;
-      background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%);
-      border: 1px solid rgba(255,255,255,0.07);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .showcase-visual::before {
-      content: '';
-      position: absolute;
-      width: 200%; height: 200%;
-      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.02) 60deg, transparent 120deg);
-      animation: spin 20s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* PRE ORDER */
-    .preorder {
-      padding: 160px 48px;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .preorder-label {
-      display: inline-block;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 6px 16px;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--mid);
-      margin-bottom: 32px;
-    }
-    .preorder h2 {
-      font-family: var(--font-display);
-      font-size: clamp(56px, 9vw, 120px);
-      line-height: 0.9;
-      letter-spacing: 0.02em;
-      margin-bottom: 32px;
-    }
-    .preorder h2 em { font-style: normal; -webkit-text-stroke: 1px var(--white); color: transparent; }
-    .preorder p {
-      font-size: 17px;
-      color: var(--mid);
-      line-height: 1.7;
-      font-weight: 300;
-      max-width: 580px;
-      margin: 0 auto 48px;
-    }
-    .preorder-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
-    .preorder-form input {
-      flex: 1;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: var(--white);
-      padding: 16px 20px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .preorder-form input::placeholder { color: #444; }
-    .preorder-form input:focus { border-color: rgba(255,255,255,0.5); }
-    .preorder-form button {
-      background: var(--white);
-      color: var(--black);
-      border: none;
-      padding: 16px 28px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: none;
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .preorder-form button:hover { background: #ddd; transform: scale(1.03); }
-    .preorder-note { font-size: 12px; color: #444; margin-top: 20px; letter-spacing: 0.05em; }
-
-    /* GALLERY STRIP */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-    .gallery-item {
-      aspect-ratio: 3/4;
-      background: linear-gradient(135deg, #161616 0%, #0f0f0f 100%);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 12px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.4s ease;
-    }
-    .gallery-item:hover { transform: scale(0.98); }
-    .gallery-item .overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
-    }
-    .gallery-label {
-      position: absolute;
-      bottom: 20px; left: 20px;
-      font-family: var(--font-display);
-      font-size: 20px;
-      letter-spacing: 0.05em;
-      z-index: 1;
-    }
-    .gallery-placeholder-icon { font-size: 40px; opacity: 0.15; z-index: 0; }
+    .spec-row:first-child { border-top:1px solid var(--border); }
+    .spec-key { font-family:var(--font-display);font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--mid); }
+    .spec-val { font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.08em; }
 
     /* STATS */
-    .stats {
-      padding: 120px 48px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    .stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border); }
+    .stat-cell { background:var(--black);padding:56px 40px;text-align:center; }
+    .stat-num { font-family:var(--font-display);font-size:clamp(48px,5vw,72px);font-weight:800;line-height:1; }
+    .stat-unit { font-size:.5em;opacity:.5; }
+    .stat-label { font-family:var(--font-display);font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-top:8px; }
+
+    /* CUSTOMISE CTA */
+    .customise-cta {
+      padding:160px 56px;text-align:center;position:relative;overflow:hidden;
+      border-top:1px solid var(--border);
     }
-    .stats-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
+    .customise-cta::before {
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 80% at 50% 50%, #0d1a2e 0%, var(--black) 70%);
     }
-    .stat-item {
-      background: var(--black);
-      padding: 48px 40px;
-      text-align: center;
+    .customise-cta .inner { position:relative;z-index:1;max-width:800px;margin:0 auto; }
+    .customise-cta .section-label { font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:block; }
+    .customise-cta h2 { font-family:var(--font-display);font-size:clamp(60px,9vw,120px);font-weight:800;line-height:.9;text-transform:uppercase;margin-bottom:32px; }
+    .customise-cta h2 em { font-style:normal;-webkit-text-stroke:1.5px var(--white);color:transparent; }
+    .customise-cta p { font-family:var(--font-serif);font-style:italic;font-size:20px;color:rgba(255,255,255,.4);margin-bottom:56px;line-height:1.6; }
+    .btn-large {
+      background:var(--white);color:var(--black);border:none;
+      padding:22px 64px;font-family:var(--font-display);font-size:13px;font-weight:700;
+      letter-spacing:.25em;text-transform:uppercase;cursor:none;text-decoration:none;
+      display:inline-block;transition:all .3s;
     }
-    .stat-num {
-      font-family: var(--font-display);
-      font-size: clamp(48px, 6vw, 80px);
-      line-height: 1;
-      letter-spacing: 0.02em;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: var(--mid);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-top: 8px;
-    }
+    .btn-large:hover { background:var(--cream);transform:translateY(-3px); }
 
     /* FOOTER */
-    footer {
-      padding: 80px 48px 40px;
-      border-top: 1px solid var(--border);
-    }
-    .footer-top {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      max-width: 1200px; margin: 0 auto;
-      padding-bottom: 60px;
-      border-bottom: 1px solid var(--border);
-    }
-    .footer-logo img { height: 28px; opacity: 0.7; }
-    .footer-tagline { font-size: 12px; color: #444; margin-top: 12px; letter-spacing: 0.08em; }
-    .footer-cols { display: flex; gap: 80px; }
-    .footer-col h4 {
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--mid);
-      margin-bottom: 20px;
-    }
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .footer-col ul a {
-      color: #555;
-      text-decoration: none;
-      font-size: 13px;
-      transition: color 0.2s;
-    }
-    .footer-col ul a:hover { color: var(--white); }
-    .footer-bottom {
-      max-width: 1200px; margin: 0 auto;
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 32px;
-    }
-    .footer-bottom p { font-size: 12px; color: #333; }
+    footer { padding:80px 56px 40px;border-top:1px solid var(--border); }
+    .foot-top { display:flex;justify-content:space-between;align-items:flex-start;max-width:1200px;margin:0 auto;padding-bottom:56px;border-bottom:1px solid var(--border); }
+    .foot-brand img { height:28px;opacity:.6;margin-bottom:12px; }
+    .foot-tagline { font-family:var(--font-serif);font-style:italic;font-size:13px;color:#333; }
+    .foot-cols { display:flex;gap:80px; }
+    .foot-col h4 { font-family:var(--font-display);font-size:10px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);margin-bottom:20px; }
+    .foot-col ul { list-style:none;display:flex;flex-direction:column;gap:10px; }
+    .foot-col ul a { color:#3a3a3a;text-decoration:none;font-size:13px;transition:color .2s; }
+    .foot-col ul a:hover { color:var(--white); }
+    .foot-bottom { max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding-top:28px; }
+    .foot-bottom p { font-size:11px;color:#252525;letter-spacing:.05em; }
 
-    /* REVEAL ANIMATION */
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* REVEAL */
+    .reveal { opacity:0;transform:translateY(36px);transition:opacity .9s ease,transform .9s ease; }
+    .reveal.visible { opacity:1;transform:translateY(0); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
 
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
-      .nav-links { display: none; }
-      .features { padding: 80px 24px; }
-      .features-grid { grid-template-columns: 1fr; }
-      .showcase { padding: 80px 24px; }
-      .showcase-inner { grid-template-columns: 1fr; gap: 48px; }
-      .gallery { grid-template-columns: repeat(2, 1fr); }
-      .stats-inner { grid-template-columns: repeat(2, 1fr); }
-      .footer-top { flex-direction: column; gap: 40px; }
-      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-      .preorder-form { flex-direction: column; }
-      body { cursor: auto; }
-      .cursor, .cursor-ring { display: none; }
+    @media(max-width:900px){
+      nav{padding:0 24px;}
+      .nav-links{display:none;}
+      .intro{grid-template-columns:1fr;gap:48px;padding:80px 24px;}
+      .features-section{padding:80px 24px;}
+      .features-grid{grid-template-columns:1fr;}
+      .specs-section{padding:80px 24px;}
+      .specs-inner{grid-template-columns:1fr;gap:48px;}
+      .stats-row{grid-template-columns:repeat(2,1fr);}
+      .customise-cta{padding:100px 24px;}
+      footer{padding:60px 24px 32px;}
+      .foot-top{flex-direction:column;gap:40px;}
+      body{cursor:auto;}
+      #cur,#cur2{display:none;}
     }
   </style>
 </head>
 <body>
+  <div id="cur"></div>
+  <div id="cur2"></div>
 
-  <!-- Custom Cursor -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
-
-  <!-- NAV -->
-  <nav>
-    <a class="nav-logo" href="#">
-      <img src="Screenshot_2026-06-04_130225.png" alt="Sport Sight" />
-    </a>
+  <nav id="mainNav">
+    <a href="index.html" class="nav-logo"><img src="Screenshot 2026-06-04 130225.png" alt="Sport Sight" /></a>
     <ul class="nav-links">
-      <li><a href="#features">Technology</a></li>
-      <li><a href="#showcase">Design</a></li>
-      <li><a href="#gallery">Gallery</a></li>
-      <li><a href="#preorder">Pre-Order</a></li>
+      <li><a href="#technology">Technology</a></li>
+      <li><a href="#design">Design</a></li>
+      <li><a href="#specs">Specs</a></li>
+      <li><a href="#customise">Customise</a></li>
     </ul>
-    <button class="nav-cta" onclick="document.getElementById('preorder').scrollIntoView({behavior:'smooth'})">Pre-Order Now</button>
+    <div class="nav-right">
+      <span class="price-tag">From $300</span>
+      <a href="preorder.html" class="btn-nav">Pre-Order</a>
+    </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
     <div class="hero-bg"></div>
-    <div class="hero-grid"></div>
-
-    <div class="hero-badge"><span></span> Pre-Order Now Open</div>
-
-    <h1>SPORT<br /><em>SIGHT</em></h1>
-    <p class="hero-sub">Performance eyewear engineered for athletes who refuse to compromise. See further. Move faster. Perform beyond limits.</p>
-
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="document.getElementById('preorder').scrollIntoView({behavior:'smooth'})">Reserve Yours</button>
-      <a href="#features" class="btn-secondary">Explore Technology ↓</a>
-    </div>
-
-    <div class="hero-image">
-      <div class="hero-image-placeholder">
-        <div class="placeholder-icon">🥽</div>
-        <div class="placeholder-text">Product Image Coming Soon</div>
+    <div class="hero-vignette"></div>
+    <div class="hero-line-left"></div>
+    <div class="hero-line-right"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Limited Pre-Order Open</div>
+      <h1>SPORT<br /><span class="outline">SIGHT</span></h1>
+      <div class="hero-product">
+        <img src="1780543413593_image.png" alt="Sport Sight Performance Eyewear" />
+      </div>
+      <p class="hero-sub">Precision-engineered performance eyewear. Uncompromising clarity.</p>
+      <div class="hero-actions">
+        <a href="preorder.html" class="btn-primary">Configure & Pre-Order</a>
+        <a href="#technology" class="btn-ghost">Explore</a>
       </div>
     </div>
-
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-bar"></div></div>
   </section>
 
   <!-- MARQUEE -->
-  <div class="marquee-section">
+  <div class="marquee-wrap">
     <div class="marquee-track">
-      <span>Precision Optics</span><span class="dot">·</span>
-      <span>Aerodynamic Frame</span><span class="dot">·</span>
-      <span>UV400 Protection</span><span class="dot">·</span>
-      <span>Sport Engineered</span><span class="dot">·</span>
-      <span>Anti-Fog Lens</span><span class="dot">·</span>
-      <span>Feather-Light Build</span><span class="dot">·</span>
-      <span>Precision Optics</span><span class="dot">·</span>
-      <span>Aerodynamic Frame</span><span class="dot">·</span>
-      <span>UV400 Protection</span><span class="dot">·</span>
-      <span>Sport Engineered</span><span class="dot">·</span>
-      <span>Anti-Fog Lens</span><span class="dot">·</span>
-      <span>Feather-Light Build</span><span class="dot">·</span>
+      <span class="item">Precision Optics</span><span class="dot">◆</span>
+      <span class="item">UV400 Full Spectrum</span><span class="dot">◆</span>
+      <span class="item">28g Frame Weight</span><span class="dot">◆</span>
+      <span class="item">Anti-Fog Lens</span><span class="dot">◆</span>
+      <span class="item">Aerodynamic Form</span><span class="dot">◆</span>
+      <span class="item">Swappable Lenses</span><span class="dot">◆</span>
+      <span class="item">Custom Strap</span><span class="dot">◆</span>
+      <span class="item">From $300</span><span class="dot">◆</span>
+      <span class="item">Precision Optics</span><span class="dot">◆</span>
+      <span class="item">UV400 Full Spectrum</span><span class="dot">◆</span>
+      <span class="item">28g Frame Weight</span><span class="dot">◆</span>
+      <span class="item">Anti-Fog Lens</span><span class="dot">◆</span>
+      <span class="item">Aerodynamic Form</span><span class="dot">◆</span>
+      <span class="item">Swappable Lenses</span><span class="dot">◆</span>
+      <span class="item">Custom Strap</span><span class="dot">◆</span>
+      <span class="item">From $300</span><span class="dot">◆</span>
     </div>
   </div>
 
-  <!-- FEATURES -->
-  <section class="features" id="features">
-    <div class="section-label reveal">01 — Technology</div>
-    <h2 class="features-headline reveal">Built For <em>Peak</em><br />Performance</h2>
-
-    <div class="features-grid reveal">
-      <div class="feature-card">
-        <div class="feature-num">01</div>
-        <div class="feature-icon">🔬</div>
-        <div class="feature-title">Precision Optics</div>
-        <div class="feature-desc">High-definition optical lenses engineered for razor-sharp clarity at every distance, eliminating distortion even at extreme speeds.</div>
+  <!-- PRODUCT INTRO -->
+  <section class="intro" id="design">
+    <div class="intro-visual reveal">
+      <div class="intro-img-wrap">
+        <img src="1780543413593_image.png" alt="Sport Sight Side View" />
+        <div class="intro-tag">Pre-Order — $300</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-num">02</div>
-        <div class="feature-icon">🛡️</div>
-        <div class="feature-title">UV400 Shield</div>
-        <div class="feature-desc">Full-spectrum UV protection blocks 100% of harmful rays. Train at altitude, compete at sea level — your eyes stay protected everywhere.</div>
+    </div>
+    <div class="intro-text reveal">
+      <div class="section-label">01 — The Product</div>
+      <h2>Born For<br /><em>Speed</em></h2>
+      <p class="lead">Where engineering meets obsession.</p>
+      <p>Sport Sight is designed for athletes who demand more from their equipment. Every gram has been interrogated. Every curve has been wind-tested. Every lens has been engineered for the conditions you train in.</p>
+      <p>This is not a compromise. This is the first premium sport eyewear built without concession.</p>
+      <div class="price-display">
+        <span class="price-from">From</span>
+        <span class="price-amount">$300</span>
+        <span class="price-note">Fully configurable</span>
       </div>
-      <div class="feature-card">
-        <div class="feature-num">03</div>
-        <div class="feature-icon">💨</div>
-        <div class="feature-title">Anti-Fog Core</div>
-        <div class="feature-desc">Advanced ventilation channels and hydrophobic coating keep your vision clear through the most intense intervals and weather conditions.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-num">04</div>
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">Featherweight Frame</div>
-        <div class="feature-desc">Aerospace-grade polymer construction weighs under 28g. You'll forget you're wearing them. Your performance won't forget the advantage.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-num">05</div>
-        <div class="feature-icon">🎯</div>
-        <div class="feature-title">Grip-Lock Fit</div>
-        <div class="feature-desc">Biomechanically contoured nose bridge and temple tips with rubberized grip keep everything locked in — sprints, trails, or open water.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-num">06</div>
-        <div class="feature-icon">🔄</div>
-        <div class="feature-title">Swappable Lenses</div>
-        <div class="feature-desc">Magnetic quick-change lens system adapts from bright sun to overcast skies in seconds. One frame, infinite conditions.</div>
-      </div>
+      <a href="preorder.html" class="btn-primary">Build Your Pair →</a>
     </div>
   </section>
 
-  <!-- SHOWCASE -->
-  <section class="showcase" id="showcase">
-    <div class="showcase-inner">
-      <div class="showcase-text reveal">
-        <div class="section-label">02 — Design</div>
-        <h2>Designed For<br />The Athlete</h2>
-        <p>Every curve, angle, and surface of Sport Sight has been refined through hundreds of iterations with professional athletes. Form follows function — and function demands perfection.</p>
-        <p>A single continuous frame. No unnecessary joints. No failure points. Just pure, uninterrupted performance design.</p>
-
-        <div class="spec-list">
-          <div class="spec-item">
-            <span class="spec-name">Frame Weight</span>
-            <span class="spec-val">&lt; 28g</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-name">Lens Material</span>
-            <span class="spec-val">Polycarbonate HD</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-name">UV Protection</span>
-            <span class="spec-val">UV400 Full Spectrum</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-name">Lens Options</span>
-            <span class="spec-val">5 Interchangeable</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-name">Frame Material</span>
-            <span class="spec-val">Aerospace Polymer</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-name">Available</span>
-            <span class="spec-val">Pre-Order Now</span>
-          </div>
-        </div>
+  <!-- FEATURES -->
+  <section class="features-section" id="technology">
+    <div class="features-header reveal">
+      <div class="section-label">02 — Technology</div>
+      <h2>No<br /><em>Compromise</em></h2>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <span class="feat-num">01</span>
+        <span class="feat-icon">🔬</span>
+        <div class="feat-title">HD Optics</div>
+        <div class="feat-desc">High-definition polycarbonate lenses deliver razor clarity at every distance, with zero optical distortion — even at race speed.</div>
       </div>
-
-      <div class="showcase-visual reveal">
-        <div class="placeholder-icon" style="font-size:60px;opacity:0.12;position:relative;z-index:1;">🥽</div>
-        <div class="placeholder-text" style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#333;position:relative;z-index:1;">Product Render Coming Soon</div>
+      <div class="feat-card">
+        <span class="feat-num">02</span>
+        <span class="feat-icon">☀️</span>
+        <div class="feat-title">UV400 Shield</div>
+        <div class="feat-desc">100% UV400 protection across the full spectrum. Altitude, coast, desert or water — your eyes are covered in every environment.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-num">03</span>
+        <span class="feat-icon">💨</span>
+        <div class="feat-title">Anti-Fog Core</div>
+        <div class="feat-desc">Precision ventilation channels combined with a hydrophobic inner coating eliminate fogging through the hardest intervals.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-num">04</span>
+        <span class="feat-icon">⚖️</span>
+        <div class="feat-title">28g Total Weight</div>
+        <div class="feat-desc">Aerospace-grade polymer construction. Lighter than most sunglasses, yet engineered to survive the demands of elite sport.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-num">05</span>
+        <span class="feat-icon">🔒</span>
+        <div class="feat-title">Grip-Lock Fit</div>
+        <div class="feat-desc">Rubberised non-slip nose bridge and temple grips hold position under sweat, rain, and maximum exertion. Zero movement guaranteed.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-num">06</span>
+        <span class="feat-icon">🔄</span>
+        <div class="feat-title">Quick-Change Lenses</div>
+        <div class="feat-desc">Magnetic snap-in lens system. Swap from clear to tinted in 4 seconds. Five lens options adapt to any light condition instantly.</div>
       </div>
     </div>
   </section>
 
   <!-- STATS -->
-  <section class="stats" id="stats">
-    <div class="stats-inner reveal">
-      <div class="stat-item">
-        <div class="stat-num">28<span style="font-size:40px">g</span></div>
-        <div class="stat-label">Frame Weight</div>
+  <div class="stats-row reveal">
+    <div class="stat-cell"><div class="stat-num">28<span class="stat-unit">g</span></div><div class="stat-label">Frame Weight</div></div>
+    <div class="stat-cell"><div class="stat-num">UV<span class="stat-unit">400</span></div><div class="stat-label">Protection</div></div>
+    <div class="stat-cell"><div class="stat-num">5<span class="stat-unit">×</span></div><div class="stat-label">Lens Options</div></div>
+    <div class="stat-cell"><div class="stat-num">4<span class="stat-unit">sec</span></div><div class="stat-label">Lens Swap</div></div>
+  </div>
+
+  <!-- SPECS -->
+  <section class="specs-section" id="specs">
+    <div class="specs-inner">
+      <div class="specs-left reveal">
+        <div class="section-label">03 — Specifications</div>
+        <h2>Built Different.<br />Built Better.</h2>
+        <p>Every specification reflects a deliberate engineering choice. Nothing is accidental. Nothing is there for appearance. Sport Sight exists to perform.</p>
       </div>
-      <div class="stat-item">
-        <div class="stat-num">UV<span style="font-size:40px">400</span></div>
-        <div class="stat-label">Protection Rating</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">5×</div>
-        <div class="stat-label">Lens Options</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">∞</div>
-        <div class="stat-label">Performance</div>
+      <div class="specs-table reveal">
+        <div class="spec-row"><span class="spec-key">Frame Material</span><span class="spec-val">Aerospace Polymer</span></div>
+        <div class="spec-row"><span class="spec-key">Frame Weight</span><span class="spec-val">&lt; 28g</span></div>
+        <div class="spec-row"><span class="spec-key">Lens Material</span><span class="spec-val">HD Polycarbonate</span></div>
+        <div class="spec-row"><span class="spec-key">UV Protection</span><span class="spec-val">UV400 Full Spectrum</span></div>
+        <div class="spec-row"><span class="spec-key">Lens Options</span><span class="spec-val">5 Interchangeable</span></div>
+        <div class="spec-row"><span class="spec-key">Lens Swap</span><span class="spec-val">Magnetic, 4 Seconds</span></div>
+        <div class="spec-row"><span class="spec-key">Grip System</span><span class="spec-val">Dual Rubberised</span></div>
+        <div class="spec-row"><span class="spec-key">Sport Strap</span><span class="spec-val">Included, Customisable</span></div>
+        <div class="spec-row"><span class="spec-key">Warranty</span><span class="spec-val">2 Years</span></div>
+        <div class="spec-row"><span class="spec-key">Base Price</span><span class="spec-val">$300 USD</span></div>
       </div>
     </div>
   </section>
 
-  <!-- GALLERY -->
-  <section id="gallery">
-    <div class="gallery reveal">
-      <div class="gallery-item">
-        <div class="gallery-placeholder-icon">🏃</div>
-        <div class="overlay"></div>
-        <div class="gallery-label">Running</div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder-icon">🚴</div>
-        <div class="overlay"></div>
-        <div class="gallery-label">Cycling</div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder-icon">🏊</div>
-        <div class="overlay"></div>
-        <div class="gallery-label">Triathlon</div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder-icon">⛰️</div>
-        <div class="overlay"></div>
-        <div class="gallery-label">Trail</div>
-      </div>
+  <!-- CUSTOMISE CTA -->
+  <section class="customise-cta" id="customise">
+    <div class="inner reveal">
+      <span class="section-label">04 — Make It Yours</span>
+      <h2>YOUR<br /><em>VISION</em></h2>
+      <p>Choose your frame colour, lens tint, and sport strap. Every pair is unique — built exactly to your specification.</p>
+      <a href="preorder.html" class="btn-large">Configure Your Pair</a>
     </div>
   </section>
 
-  <!-- PRE ORDER -->
-  <section class="preorder" id="preorder">
-    <div class="preorder-label reveal">Limited Early Access</div>
-    <h2 class="reveal">PRE<br /><em>ORDER</em></h2>
-    <p class="reveal">Be among the first to experience Sport Sight. Join the waitlist and secure your pair before the official launch. Early supporters receive exclusive pricing.</p>
-
-    <div class="preorder-form reveal">
-      <input type="email" placeholder="Enter your email address" id="emailInput" />
-      <button onclick="handlePreorder()">Reserve</button>
-    </div>
-    <div class="preorder-note reveal" id="preorderConfirm">No spam, ever. Unsubscribe anytime.</div>
-  </section>
-
-  <!-- FOOTER -->
   <footer>
-    <div class="footer-top">
-      <div>
-        <img src="Screenshot_2026-06-04_130225.png" alt="Sport Sight" class="footer-logo" style="height:28px;opacity:0.6;" />
-        <div class="footer-tagline">See Further. Move Faster.</div>
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="Screenshot 2026-06-04 130225.png" alt="Sport Sight" />
+        <div class="foot-tagline">See Further. Move Faster.</div>
       </div>
-      <div class="footer-cols">
-        <div class="footer-col">
+      <div class="foot-cols">
+        <div class="foot-col">
           <h4>Product</h4>
           <ul>
-            <li><a href="#features">Technology</a></li>
-            <li><a href="#showcase">Design</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#preorder">Pre-Order</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#specs">Specifications</a></li>
+            <li><a href="preorder.html">Pre-Order</a></li>
           </ul>
         </div>
-        <div class="footer-col">
+        <div class="foot-col">
           <h4>Company</h4>
           <ul>
-            <li><a href="#">About Us</a></li>
+            <li><a href="#">About</a></li>
             <li><a href="#">Athletes</a></li>
-            <li><a href="#">Press</a></li>
             <li><a href="#">Contact</a></li>
           </ul>
         </div>
-        <div class="footer-col">
+        <div class="foot-col">
           <h4>Support</h4>
           <ul>
             <li><a href="#">FAQ</a></li>
-            <li><a href="#">Sizing Guide</a></li>
-            <li><a href="#">Shipping</a></li>
+            <li><a href="#">Sizing</a></li>
             <li><a href="#">Returns</a></li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="footer-bottom">
+    <div class="foot-bottom">
       <p>© 2026 Sport Sight. All rights reserved.</p>
-      <p>Privacy Policy · Terms of Service</p>
+      <p>Privacy · Terms</p>
     </div>
   </footer>
 
   <script>
-    // CURSOR
-    const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
-    function animRing() {
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
-      ring.style.left = rx+'px';
-      ring.style.top = ry+'px';
-      requestAnimationFrame(animRing);
-    }
-    animRing();
-
-    // SCROLL REVEAL
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
-    }, { threshold: 0.1 });
-    reveals.forEach(r => observer.observe(r));
-
-    // PRE ORDER
-    function handlePreorder() {
-      const email = document.getElementById('emailInput').value;
-      const confirm = document.getElementById('preorderConfirm');
-      if (email && email.includes('@')) {
-        confirm.textContent = '✓ You\'re on the list! We\'ll be in touch before launch.';
-        confirm.style.color = '#aaa';
-        document.getElementById('emailInput').value = '';
-      } else {
-        confirm.textContent = 'Please enter a valid email address.';
-        confirm.style.color = '#888';
-      }
-    }
-
-    // NAV scroll effect
-    window.addEventListener('scroll', () => {
-      const nav = document.querySelector('nav');
-      nav.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.95)' : 'rgba(10,10,10,0.7)';
-    });
+    const cur = document.getElementById('cur'), cur2 = document.getElementById('cur2');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+    (function anim(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(anim);})();
+    const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+    document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+    window.addEventListener('scroll',()=>{document.getElementById('mainNav').style.background=window.scrollY>60?'rgba(6,6,6,.98)':'rgba(6,6,6,.85)';});
   </script>
-
 </body>
 </html>
