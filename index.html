@@ -1,355 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sport Sight | Elite HUD Tracking Eyewear</title>
-    <style>
-        /* Modern Minimalist High-Luminance Design Tokens */
-        :root {
-            --bg-white: #ffffff;
-            --bg-light-card: #f5f5f7;
-            --text-pure: #1d1d1f;
-            --text-dim: #6e6e73;
-            --sport-cyan: #00bcd4;
-            --sport-blue: #0066cc;
-            --global-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sport Sight — See Further. Move Faster.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Smooth Scrolling Configuration */
-        html {
-            scroll-behavior: smooth;
-            background-color: var(--bg-white);
-        }
+    :root {
+      --black: #0a0a0a;
+      --white: #f8f8f8;
+      --mid: #888;
+      --border: rgba(255,255,255,0.1);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: var(--global-font);
-            letter-spacing: -0.022em;
-        }
+    html { scroll-behavior: smooth; }
 
-        body {
-            background-color: var(--bg-white);
-            color: var(--text-pure);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
 
-        /* Ultra-Slick White Sticky Nav */
-        .site-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            height: 64px;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* CUSTOM CURSOR */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--white);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+    }
+    body:has(a:hover) .cursor-ring,
+    body:has(button:hover) .cursor-ring { width: 56px; height: 56px; opacity: 0.6; }
 
-        .nav-container {
-            width: 100%;
-            max-width: 1100px;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,10,0.7);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-logo img { height: 36px; filter: invert(0); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      color: var(--mid);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      padding: 10px 24px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: #ddd; transform: scale(1.03); }
 
-        /* Integrated Custom Logo Structural Box */
-        .nav-logo-box {
-            display: flex;
-            align-items: center;
-            height: 32px;
-            cursor: pointer;
-        }
+    /* HERO */
+    .hero {
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 0 24px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 60%, #1a1a1a 0%, var(--black) 70%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 18px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 32px;
+      position: relative; z-index: 1;
+      animation: fadeUp 1s ease both;
+    }
+    .hero-badge span { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(72px, 12vw, 160px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      position: relative; z-index: 1;
+      animation: fadeUp 1s 0.1s ease both;
+    }
+    .hero h1 em {
+      font-style: normal;
+      -webkit-text-stroke: 1px var(--white);
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 300;
+      color: var(--mid);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-top: 24px;
+      position: relative; z-index: 1;
+      animation: fadeUp 1s 0.2s ease both;
+    }
+    .hero-actions {
+      display: flex; gap: 16px;
+      margin-top: 48px;
+      position: relative; z-index: 1;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+    .btn-primary {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      padding: 16px 40px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn-primary:hover { background: #e0e0e0; transform: scale(1.04); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 16px 40px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: none;
+      text-decoration: none;
+      display: flex; align-items: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--white); background: rgba(255,255,255,0.05); }
 
-        .brand-logo-img {
-            height: 100%;
-            width: auto;
-            object-fit: contain;
-        }
+    /* HERO PRODUCT IMAGE */
+    .hero-image {
+      position: relative; z-index: 1;
+      margin-top: 64px;
+      animation: fadeUp 1s 0.4s ease both;
+      width: 100%; max-width: 900px;
+    }
+    .hero-image-placeholder {
+      width: 100%;
+      aspect-ratio: 16/7;
+      background: linear-gradient(135deg, #1c1c1c 0%, #111 40%, #1a1a1a 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-image-placeholder::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%);
+    }
+    .placeholder-icon { font-size: 48px; opacity: 0.3; }
+    .placeholder-text { font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: #555; }
 
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-            list-style: none;
-        }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
+    /* SCROLL INDICATOR */
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 1;
+      animation: fadeUp 1s 1s ease both;
+    }
+    .scroll-hint span { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #444; }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, #444, transparent);
+      animation: scrollAnim 2s ease infinite;
+    }
+    @keyframes scrollAnim { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(0.5);opacity:0.4} }
 
-        .nav-links a:hover {
-            color: var(--text-pure);
-        }
+    /* MARQUEE */
+    .marquee-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+      overflow: hidden;
+      background: var(--black);
+    }
+    .marquee-track {
+      display: flex; gap: 64px;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-family: var(--font-display);
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      color: #333;
+      text-transform: uppercase;
+    }
+    .marquee-track .dot { color: var(--white); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        .btn-action {
-            background-color: var(--text-pure);
-            color: var(--bg-white) !important;
-            padding: 7px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
+    /* FEATURES */
+    .features {
+      padding: 160px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 24px;
+    }
+    .features-headline {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      max-width: 700px;
+      margin-bottom: 80px;
+    }
+    .features-headline em { font-style: normal; -webkit-text-stroke: 1px var(--white); color: transparent; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .feature-card {
+      background: var(--black);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .feature-card:hover { background: #111; }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--white);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .feature-card:hover::after { transform: scaleX(1); }
+    .feature-num {
+      font-family: var(--font-display);
+      font-size: 64px;
+      color: rgba(255,255,255,0.06);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+    .feature-icon { font-size: 28px; margin-bottom: 20px; }
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .feature-desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
 
-        .btn-action:hover {
-            transform: scale(1.03);
-            background-color: var(--sport-cyan);
-        }
+    /* PRODUCT SHOWCASE */
+    .showcase {
+      padding: 120px 48px;
+      background: #080808;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .showcase-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .showcase-text .section-label { margin-bottom: 16px; }
+    .showcase-text h2 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 72px);
+      line-height: 1;
+      margin-bottom: 24px;
+    }
+    .showcase-text p {
+      font-size: 16px;
+      color: var(--mid);
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .spec-list { margin-top: 40px; display: flex; flex-direction: column; gap: 0; }
+    .spec-item {
+      display: flex; justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .spec-item .spec-name { color: var(--mid); letter-spacing: 0.05em; }
+    .spec-item .spec-val { font-weight: 500; }
+    .showcase-visual {
+      aspect-ratio: 1;
+      background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%);
+      border: 1px solid rgba(255,255,255,0.07);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase-visual::before {
+      content: '';
+      position: absolute;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.02) 60deg, transparent 120deg);
+      animation: spin 20s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Cinematic Full-Viewport Layouts */
-        .hero-viewport {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 140px 24px 80px 24px;
-            position: relative;
-        }
+    /* PRE ORDER */
+    .preorder {
+      padding: 160px 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .preorder-label {
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 32px;
+    }
+    .preorder h2 {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 9vw, 120px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+    .preorder h2 em { font-style: normal; -webkit-text-stroke: 1px var(--white); color: transparent; }
+    .preorder p {
+      font-size: 17px;
+      color: var(--mid);
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 580px;
+      margin: 0 auto 48px;
+    }
+    .preorder-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
+    .preorder-form input {
+      flex: 1;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      padding: 16px 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .preorder-form input::placeholder { color: #444; }
+    .preorder-form input:focus { border-color: rgba(255,255,255,0.5); }
+    .preorder-form button {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      padding: 16px 28px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: none;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .preorder-form button:hover { background: #ddd; transform: scale(1.03); }
+    .preorder-note { font-size: 12px; color: #444; margin-top: 20px; letter-spacing: 0.05em; }
 
-        /* Premium Slick Typography */
-        .eyebrow {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--sport-cyan);
-            margin-bottom: 14px;
-        }
+    /* GALLERY STRIP */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .gallery-item {
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, #161616 0%, #0f0f0f 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover { transform: scale(0.98); }
+    .gallery-item .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+    }
+    .gallery-label {
+      position: absolute;
+      bottom: 20px; left: 20px;
+      font-family: var(--font-display);
+      font-size: 20px;
+      letter-spacing: 0.05em;
+      z-index: 1;
+    }
+    .gallery-placeholder-icon { font-size: 40px; opacity: 0.15; z-index: 0; }
 
-        .main-headline {
-            font-size: clamp(38px, 6.5vw, 72px);
-            font-weight: 800;
-            line-height: 1.06;
-            margin-bottom: 18px;
-            color: var(--text-pure);
-        }
+    /* STATS */
+    .stats {
+      padding: 120px 48px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .stat-item {
+      background: var(--black);
+      padding: 48px 40px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--mid);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
 
-        .sub-headline {
-            font-size: clamp(18px, 2.2vw, 24px);
-            font-weight: 400;
-            color: var(--text-dim);
-            max-width: 620px;
-            margin-bottom: 36px;
-            line-height: 1.35;
-        }
+    /* FOOTER */
+    footer {
+      padding: 80px 48px 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 60px;
+      border-bottom: 1px solid var(--border);
+    }
+    .footer-logo img { height: 28px; opacity: 0.7; }
+    .footer-tagline { font-size: 12px; color: #444; margin-top: 12px; letter-spacing: 0.08em; }
+    .footer-cols { display: flex; gap: 80px; }
+    .footer-col h4 {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul a {
+      color: #555;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 32px;
+    }
+    .footer-bottom p { font-size: 12px; color: #333; }
 
-        .cta-group {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 54px;
-        }
+    /* REVEAL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        .cta-link {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--sport-blue);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .features { padding: 80px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .showcase { padding: 80px 24px; }
+      .showcase-inner { grid-template-columns: 1fr; gap: 48px; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { flex-direction: column; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      .preorder-form { flex-direction: column; }
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
 
-        .cta-link:hover {
-            opacity: 0.7;
-        }
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-        .cta-link::after {
-            content: "→";
-            margin-left: 6px;
-            font-size: 16px;
-        }
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <img src="Screenshot_2026-06-04_130225.png" alt="Sport Sight" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Technology</a></li>
+      <li><a href="#showcase">Design</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#preorder">Pre-Order</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('preorder').scrollIntoView({behavior:'smooth'})">Pre-Order Now</button>
+  </nav>
 
-        /* Centred Minimal Light Image Frames */
-        .media-container {
-            width: 100%;
-            max-width: 960px;
-            height: 480px;
-            border-radius: 24px;
-            overflow: hidden;
-            background-color: var(--bg-light-card);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
-        }
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
 
-        .glass-image-target {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: none;
-        }
+    <div class="hero-badge"><span></span> Pre-Order Now Open</div>
 
-        /* Blank State Light Fallback Pattern */
-        .glass-image-target:not([src]), .glass-image-target[src=""] {
-            background: radial-gradient(circle at center, rgba(0, 188, 212, 0.04) 0%, transparent 70%);
-            position: relative;
-        }
+    <h1>SPORT<br /><em>SIGHT</em></h1>
+    <p class="hero-sub">Performance eyewear engineered for athletes who refuse to compromise. See further. Move faster. Perform beyond limits.</p>
 
-        .glass-image-target:not([src])::before, .glass-image-target[src=""]::before {
-            content: "[ Sport Glasses Asset Area ]";
-            color: rgba(0, 0, 0, 0.25);
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('preorder').scrollIntoView({behavior:'smooth'})">Reserve Yours</button>
+      <a href="#features" class="btn-secondary">Explore Technology ↓</a>
+    </div>
 
-        /* Premium Minimalist Bento Grid Section */
-        .grid-section {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px 100px 24px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
+    <div class="hero-image">
+      <div class="hero-image-placeholder">
+        <div class="placeholder-icon">🥽</div>
+        <div class="placeholder-text">Product Image Coming Soon</div>
+      </div>
+    </div>
 
-        .bento-card {
-            background-color: var(--bg-light-card);
-            border: 1px solid rgba(0, 0, 0, 0.02);
-            border-radius: 28px;
-            padding: 48px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 520px;
-            overflow: hidden;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-        }
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
 
-        .bento-card:hover {
-            border-color: rgba(0, 0, 0, 0.08);
-            background-color: #f0f0f2;
-        }
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span>Precision Optics</span><span class="dot">·</span>
+      <span>Aerodynamic Frame</span><span class="dot">·</span>
+      <span>UV400 Protection</span><span class="dot">·</span>
+      <span>Sport Engineered</span><span class="dot">·</span>
+      <span>Anti-Fog Lens</span><span class="dot">·</span>
+      <span>Feather-Light Build</span><span class="dot">·</span>
+      <span>Precision Optics</span><span class="dot">·</span>
+      <span>Aerodynamic Frame</span><span class="dot">·</span>
+      <span>UV400 Protection</span><span class="dot">·</span>
+      <span>Sport Engineered</span><span class="dot">·</span>
+      <span>Anti-Fog Lens</span><span class="dot">·</span>
+      <span>Feather-Light Build</span><span class="dot">·</span>
+    </div>
+  </div>
 
-        .bento-card .main-headline {
-            font-size: 34px;
-            margin-bottom: 12px;
-        }
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label reveal">01 — Technology</div>
+    <h2 class="features-headline reveal">Built For <em>Peak</em><br />Performance</h2>
 
-        .bento-card .sub-headline {
-            font-size: 16px;
-            margin-bottom: 0;
-        }
+    <div class="features-grid reveal">
+      <div class="feature-card">
+        <div class="feature-num">01</div>
+        <div class="feature-icon">🔬</div>
+        <div class="feature-title">Precision Optics</div>
+        <div class="feature-desc">High-definition optical lenses engineered for razor-sharp clarity at every distance, eliminating distortion even at extreme speeds.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">02</div>
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">UV400 Shield</div>
+        <div class="feature-desc">Full-spectrum UV protection blocks 100% of harmful rays. Train at altitude, compete at sea level — your eyes stay protected everywhere.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">03</div>
+        <div class="feature-icon">💨</div>
+        <div class="feature-title">Anti-Fog Core</div>
+        <div class="feature-desc">Advanced ventilation channels and hydrophobic coating keep your vision clear through the most intense intervals and weather conditions.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">04</div>
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Featherweight Frame</div>
+        <div class="feature-desc">Aerospace-grade polymer construction weighs under 28g. You'll forget you're wearing them. Your performance won't forget the advantage.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">05</div>
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Grip-Lock Fit</div>
+        <div class="feature-desc">Biomechanically contoured nose bridge and temple tips with rubberized grip keep everything locked in — sprints, trails, or open water.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">06</div>
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Swappable Lenses</div>
+        <div class="feature-desc">Magnetic quick-change lens system adapts from bright sun to overcast skies in seconds. One frame, infinite conditions.</div>
+      </div>
+    </div>
+  </section>
 
-        .bento-media {
-            width: 100%;
-            height: 240px;
-            border-radius: 16px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            margin-top: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <!-- SHOWCASE -->
+  <section class="showcase" id="showcase">
+    <div class="showcase-inner">
+      <div class="showcase-text reveal">
+        <div class="section-label">02 — Design</div>
+        <h2>Designed For<br />The Athlete</h2>
+        <p>Every curve, angle, and surface of Sport Sight has been refined through hundreds of iterations with professional athletes. Form follows function — and function demands perfection.</p>
+        <p>A single continuous frame. No unnecessary joints. No failure points. Just pure, uninterrupted performance design.</p>
 
-        /* SLICK SLIDE-OUT PRE-ORDER INTERACTIVE DRAWER SYSTEM */
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 10000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
-        }
+        <div class="spec-list">
+          <div class="spec-item">
+            <span class="spec-name">Frame Weight</span>
+            <span class="spec-val">&lt; 28g</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-name">Lens Material</span>
+            <span class="spec-val">Polycarbonate HD</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-name">UV Protection</span>
+            <span class="spec-val">UV400 Full Spectrum</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-name">Lens Options</span>
+            <span class="spec-val">5 Interchangeable</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-name">Frame Material</span>
+            <span class="spec-val">Aerospace Polymer</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-name">Available</span>
+            <span class="spec-val">Pre-Order Now</span>
+          </div>
+        </div>
+      </div>
 
-        .drawer-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+      <div class="showcase-visual reveal">
+        <div class="placeholder-icon" style="font-size:60px;opacity:0.12;position:relative;z-index:1;">🥽</div>
+        <div class="placeholder-text" style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#333;position:relative;z-index:1;">Product Render Coming Soon</div>
+      </div>
+    </div>
+  </section>
 
-        .preorder-drawer {
-            position: fixed;
-            top: 0;
-            right: -460px;
-            width: 100%;
-            max-width: 460px;
-            height: 100vh;
-            background-color: var(--bg-white);
-            border-left: 1px solid rgba(0, 0, 0, 0.06);
-            box-shadow: -10px 0 40px rgba(0,0,0,0.05);
-            z-index: 10001;
-            padding: 40px 32px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
+  <!-- STATS -->
+  <section class="stats" id="stats">
+    <div class="stats-inner reveal">
+      <div class="stat-item">
+        <div class="stat-num">28<span style="font-size:40px">g</span></div>
+        <div class="stat-label">Frame Weight</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">UV<span style="font-size:40px">400</span></div>
+        <div class="stat-label">Protection Rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5×</div>
+        <div class="stat-label">Lens Options</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Performance</div>
+      </div>
+    </div>
+  </section>
 
-        .drawer-overlay.active .preorder-drawer {
-            transform: translateX(-460px);
-        }
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="gallery reveal">
+      <div class="gallery-item">
+        <div class="gallery-placeholder-icon">🏃</div>
+        <div class="overlay"></div>
+        <div class="gallery-label">Running</div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder-icon">🚴</div>
+        <div class="overlay"></div>
+        <div class="gallery-label">Cycling</div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder-icon">🏊</div>
+        <div class="overlay"></div>
+        <div class="gallery-label">Triathlon</div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder-icon">⛰️</div>
+        <div class="overlay"></div>
+        <div class="gallery-label">Trail</div>
+      </div>
+    </div>
+  </section>
 
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 36px;
-        }
+  <!-- PRE ORDER -->
+  <section class="preorder" id="preorder">
+    <div class="preorder-label reveal">Limited Early Access</div>
+    <h2 class="reveal">PRE<br /><em>ORDER</em></h2>
+    <p class="reveal">Be among the first to experience Sport Sight. Join the waitlist and secure your pair before the official launch. Early supporters receive exclusive pricing.</p>
 
-        .drawer-close {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 28px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
+    <div class="preorder-form reveal">
+      <input type="email" placeholder="Enter your email address" id="emailInput" />
+      <button onclick="handlePreorder()">Reserve</button>
+    </div>
+    <div class="preorder-note reveal" id="preorderConfirm">No spam, ever. Unsubscribe anytime.</div>
+  </section>
 
-        .drawer-close:hover { color: var(--text-pure); }
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <img src="Screenshot_2026-06-04_130225.png" alt="Sport Sight" class="footer-logo" style="height:28px;opacity:0.6;" />
+        <div class="footer-tagline">See Further. Move Faster.</div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Technology</a></li>
+            <li><a href="#showcase">Design</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#preorder">Pre-Order</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Athletes</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Sizing Guide</a></li>
+            <li><a href="#">Shipping</a></li>
+            <li><a href="#">Returns</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Sport Sight. All rights reserved.</p>
+      <p>Privacy Policy · Terms of Service</p>
+    </div>
+  </footer>
 
-        /* Custom Interactive Checkout Form styling */
-        .form-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            display: block;
-            font-weight: 600;
-        }
+  <script>
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+    function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx+'px';
+      ring.style.top = ry+'px';
+      requestAnimationFrame(animRing);
+    }
+    animRing();
 
-        .variant-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 28px;
-        }
+    // SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
 
-        .variant-option {
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: var(--bg-light-card);
-            border-radius: 12px;
-            padding: 14px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-Use code with caution.transition: all 0.2s ease;}.variant-option.selected {border-color: var(--text-pure);background: var(--text-pure);color: var(--bg-white);}.input-field {width: 100%;background: var(--bg-light-card);border: 1px solid rgba(0, 0, 0, 0.05);padding: 14px;border-radius: 12px;color: var(--text-pure);font-size: 15px;margin-bottom: 20px;outline: none;transition: border-color 0.2s;}.input-field:focus { border-color: var(--text-pure); }.submit-preorder {width: 100%;background-color: var(--text-pure);color: var(--bg-white);padding: 16px;border: none;border-radius: 14px;font-size: 16px;font-weight: 700;cursor: pointer;margin-top: auto;transition: transform 0.2s, opacity 0.2s;}.submit-preorder:hover {transform: translateY(-1px);opacity: 0.9;}@media (max-width: 768px) {.grid-section { grid-template-columns: 1fr; gap: 16px; }.bento-card { padding: 32px; min-height: 420px; }.media-container { height: 300px; }.preorder-drawer { max-width: 100%; right: -100%; }.drawer-overlay.active .preorder-drawer { transform: translateX(-100%); }}OverviewHUD OpticsPerformancePre-OrderHeads-Up RealityVision Engineered To Win.Real-time biomechanics, navigation maps, and telemetry targets projected onto ultra-light protective sport armor glass.Pre-Order NowAugmented PrecisionZero-Lag HUD Display.Track split times, live heart rate velocity, and route guides right in your natural sightline.Ergonomic BallisticsAerodynamic 42g Frame.Crafted with high-strength carbon composites to hold lock-fit stability through intense sprints and motion shock.Pre-Order Secure Access×Select Frame ConfigurationStealth ObsidianNeon TelemetryFull NameEmail Address* You are joining the priority reservation waitlist. No immediate payment capture occurs until product assembly validation begins.Confirm Priority Lockconst SportSightMedia = {brandLogo:       "postimg.cc",productHero:     "",hudInterface:    "",frameStructure:  ""};// DOM Mapping Injection Node Routerdocument.getElementById('img-site-logo').src    = SportSightMedia.brandLogo;document.getElementById('img-product-hero').src = SportSightMedia.productHero;document.getElementById('img-hud-spec').src     = SportSightMedia.hudInterface;document.getElementById('img-frame-spec').src    = SportSightMedia.frameStructure;// UI Drawer Interaction Functionsfunction toggleDrawer(open) {const overlay = document.getElementById('checkoutDrawerOverlay');if (open) {overlay.classList.add('active');document.body.style.overflow = 'hidden';} else {overlay.classList.remove('active');document.body.style.overflow = '';}}function handleOutsideClick(e) {if (e.target.id === 'checkoutDrawerOverlay') toggleDrawer(false);}function selectVariant(element) {const options = document.querySelectorAll('.variant-option');options.forEach(opt => opt.classList.remove('selected'));element.classList.add('selected');}
+    // PRE ORDER
+    function handlePreorder() {
+      const email = document.getElementById('emailInput').value;
+      const confirm = document.getElementById('preorderConfirm');
+      if (email && email.includes('@')) {
+        confirm.textContent = '✓ You\'re on the list! We\'ll be in touch before launch.';
+        confirm.style.color = '#aaa';
+        document.getElementById('emailInput').value = '';
+      } else {
+        confirm.textContent = 'Please enter a valid email address.';
+        confirm.style.color = '#888';
+      }
+    }
+
+    // NAV scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      nav.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.95)' : 'rgba(10,10,10,0.7)';
+    });
+  </script>
+
+</body>
+</html>
