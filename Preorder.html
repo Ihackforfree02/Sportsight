@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sport Sight — Configure & Pre-Order</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #060606;
+      --off-black: #0e0e0e;
+      --white: #f5f5f0;
+      --cream: #ece9e0;
+      --gold: #c8a96e;
+      --mid: #6a6a6a;
+      --border: rgba(255,255,255,0.07);
+      --accent: #1a6cff;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-serif: 'Cormorant Garamond', serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); overflow-x: hidden; cursor: none; min-height: 100vh; }
+    #cur { position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference; }
+    #cur2 { position:fixed;width:32px;height:32px;border:1px solid rgba(255,255,255,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s; }
+
+    /* NAV */
+    nav {
+      position:fixed;top:0;left:0;right:0;z-index:200;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 56px;height:72px;
+      background:rgba(6,6,6,.95);
+      backdrop-filter:blur(24px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-logo img { height:34px; }
+    .nav-back {
+      color:var(--mid);text-decoration:none;font-family:var(--font-display);
+      font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+      display:flex;align-items:center;gap:8px;transition:color .2s;
+    }
+    .nav-back:hover { color:var(--white); }
+    .nav-title { font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--mid); }
+
+    /* LAYOUT */
+    .configurator {
+      display:grid;grid-template-columns:1fr 420px;
+      min-height:100vh;padding-top:72px;
+    }
+
+    /* LEFT: PREVIEW */
+    .preview-panel {
+      position:sticky;top:72px;height:calc(100vh - 72px);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      background:var(--off-black);border-right:1px solid var(--border);
+      overflow:hidden;
+      padding:40px;
+    }
+    .preview-bg {
+      position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 60% at 50% 50%, #0d1520 0%, var(--off-black) 70%);
+    }
+    .preview-label {
+      position:absolute;top:32px;left:32px;
+      font-family:var(--font-display);font-size:10px;font-weight:500;
+      letter-spacing:.25em;text-transform:uppercase;color:#2a2a2a;
+    }
+    .glasses-canvas {
+      position:relative;z-index:1;width:100%;max-width:540px;
+      display:flex;flex-direction:column;align-items:center;gap:0;
+    }
+
+    /* SVG GLASSES ILLUSTRATION */
+    .glasses-svg-wrap {
+      width:100%;max-width:500px;position:relative;
+      filter:drop-shadow(0 24px 60px rgba(0,0,0,.8));
+      transition:filter .5s ease;
+    }
+    #glassesPreview { width:100%; }
+
+    /* STRAP PREVIEW */
+    .strap-preview {
+      width:80%;max-width:400px;
+      margin-top:-8px;
+      position:relative;z-index:0;
+    }
+    #strapSvg { width:100%; }
+
+    .preview-name {
+      position:relative;z-index:1;margin-top:32px;text-align:center;
+    }
+    .preview-name .model { font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--mid); }
+    .preview-name .config { font-family:var(--font-serif);font-style:italic;font-size:16px;color:rgba(255,255,255,.4);margin-top:4px; }
+
+    /* RIGHT: OPTIONS */
+    .options-panel {
+      overflow-y:auto;padding:52px 48px;
+      background:var(--black);
+    }
+    .options-panel::-webkit-scrollbar { width:2px; }
+    .options-panel::-webkit-scrollbar-track { background:transparent; }
+    .options-panel::-webkit-scrollbar-thumb { background:#1a1a1a; }
+
+    .config-header { margin-bottom:48px; }
+    .config-header .eyebrow {
+      font-family:var(--font-display);font-size:10px;font-weight:600;
+      letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+    }
+    .config-header h1 {
+      font-family:var(--font-display);font-size:clamp(40px,4vw,56px);
+      font-weight:800;line-height:.95;text-transform:uppercase;
+    }
+    .config-header h1 em { font-style:normal;-webkit-text-stroke:1px var(--white);color:transparent; }
+    .config-header p {
+      font-family:var(--font-serif);font-style:italic;
+      font-size:15px;color:var(--mid);margin-top:16px;line-height:1.6;
+    }
+
+    /* SECTION */
+    .config-section { margin-bottom:44px;padding-bottom:44px;border-bottom:1px solid var(--border); }
+    .config-section:last-of-type { border-bottom:none; }
+    .section-head {
+      display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;
+    }
+    .section-title {
+      font-family:var(--font-display);font-size:11px;font-weight:600;
+      letter-spacing:.25em;text-transform:uppercase;color:var(--mid);
+    }
+    .section-selected {
+      font-family:var(--font-display);font-size:13px;font-weight:600;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--white);
+    }
+    .section-price-add { font-family:var(--font-display);font-size:11px;color:var(--gold);letter-spacing:.1em; }
+
+    /* COLOR SWATCHES */
+    .swatches { display:flex;flex-wrap:wrap;gap:10px; }
+    .swatch-btn {
+      width:44px;height:44px;border-radius:50%;border:2px solid transparent;
+      cursor:none;transition:all .2s;position:relative;
+    }
+    .swatch-btn.active { border-color:var(--white);transform:scale(1.15); }
+    .swatch-btn.active::after {
+      content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:14px;color:var(--white);text-shadow:0 0 4px rgba(0,0,0,.8);
+    }
+    .swatch-btn:hover:not(.active) { transform:scale(1.08);border-color:rgba(255,255,255,.3); }
+
+    /* LENS OPTIONS */
+    .lens-options { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+    .lens-btn {
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      padding:14px 16px;cursor:none;text-align:left;transition:all .2s;
+      position:relative;overflow:hidden;
+    }
+    .lens-btn::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s;
+    }
+    .lens-btn.active { border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06); }
+    .lens-btn.active::before { transform:scaleX(1); }
+    .lens-btn:hover:not(.active) { border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04); }
+    .lens-btn .lens-dot { width:32px;height:18px;border-radius:2px;margin-bottom:10px;display:block; }
+    .lens-name { font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase; }
+    .lens-price { font-size:11px;color:var(--gold);margin-top:3px; }
+
+    /* STRAP OPTIONS */
+    .strap-options { display:flex;flex-direction:column;gap:8px; }
+    .strap-btn {
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      padding:14px 16px;cursor:none;display:flex;align-items:center;justify-content:space-between;
+      transition:all .2s;
+    }
+    .strap-btn.active { border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06); }
+    .strap-btn:hover:not(.active) { border-color:rgba(255,255,255,.1); }
+    .strap-info { display:flex;align-items:center;gap:14px; }
+    .strap-swatch { width:48px;height:14px;border-radius:7px; }
+    .strap-name { font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase; }
+    .strap-detail { font-size:11px;color:var(--mid);margin-top:2px; }
+    .strap-price { font-family:var(--font-display);font-size:11px;color:var(--gold);letter-spacing:.08em; }
+
+    /* EXTRAS */
+    .extras-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+    .extra-btn {
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      padding:16px;cursor:none;transition:all .2s;
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .extra-btn.active { border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.06); }
+    .extra-btn:hover:not(.active) { border-color:rgba(255,255,255,.1); }
+    .extra-icon { font-size:20px; }
+    .extra-name { font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase; }
+    .extra-desc { font-size:11px;color:var(--mid);line-height:1.4; }
+    .extra-price { font-size:11px;color:var(--gold);margin-top:2px; }
+
+    /* ENGRAVING */
+    .engrave-input-wrap { position:relative; }
+    .engrave-input {
+      width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);
+      color:var(--white);padding:14px 60px 14px 16px;
+      font-family:var(--font-display);font-size:14px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+      outline:none;transition:border-color .2s;
+    }
+    .engrave-input:focus { border-color:rgba(255,255,255,.25); }
+    .engrave-input::placeholder { color:#2a2a2a;text-transform:none;font-weight:400; }
+    .engrave-count { position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--mid); }
+    .engrave-price { font-size:11px;color:var(--gold);margin-top:8px;letter-spacing:.05em; }
+
+    /* SUMMARY */
+    .order-summary {
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      padding:28px;margin-bottom:20px;
+    }
+    .summary-title { font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);margin-bottom:20px; }
+    .summary-rows { display:flex;flex-direction:column;gap:10px; }
+    .summary-row { display:flex;justify-content:space-between;font-size:13px; }
+    .summary-row .lbl { color:var(--mid); }
+    .summary-row .val { font-weight:500; }
+    .summary-divider { height:1px;background:var(--border);margin:12px 0; }
+    .summary-total { display:flex;justify-content:space-between;align-items:baseline; }
+    .summary-total .lbl { font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase; }
+    .summary-total .val { font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--white); }
+
+    /* ORDER BUTTON */
+    .btn-order {
+      width:100%;background:var(--white);color:var(--black);border:none;
+      padding:20px;font-family:var(--font-display);font-size:13px;font-weight:700;
+      letter-spacing:.25em;text-transform:uppercase;cursor:none;
+      transition:all .3s;margin-bottom:12px;
+    }
+    .btn-order:hover { background:var(--cream);transform:translateY(-2px); }
+    .btn-order:active { transform:translateY(0); }
+    .order-note { text-align:center;font-size:11px;color:#2a2a2a;letter-spacing:.05em; }
+
+    /* SUCCESS */
+    .success-overlay {
+      display:none;position:fixed;inset:0;background:rgba(6,6,6,.97);z-index:500;
+      flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;
+    }
+    .success-overlay.show { display:flex; }
+    .success-icon { font-size:48px;margin-bottom:24px; }
+    .success-overlay h2 { font-family:var(--font-display);font-size:clamp(48px,6vw,80px);font-weight:800;text-transform:uppercase;margin-bottom:16px; }
+    .success-overlay h2 em { font-style:normal;-webkit-text-stroke:1px var(--white);color:transparent; }
+    .success-overlay p { font-family:var(--font-serif);font-style:italic;font-size:18px;color:var(--mid);max-width:500px;line-height:1.6;margin-bottom:40px; }
+    .success-order-num { font-family:var(--font-display);font-size:11px;letter-spacing:.25em;color:var(--gold);margin-bottom:48px; }
+    .btn-back-home { color:var(--white);text-decoration:none;font-family:var(--font-display);font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:2px; }
+
+    @media(max-width:900px){
+      .configurator{grid-template-columns:1fr;}
+      .preview-panel{position:relative;height:60vw;top:0;}
+      nav{padding:0 24px;}
+      .options-panel{padding:32px 24px;}
+      body{cursor:auto;}
+      #cur,#cur2{display:none;}
+    }
+  </style>
+</head>
+<body>
+  <div id="cur"></div>
+  <div id="cur2"></div>
+
+  <nav>
+    <a href="index.html" class="nav-back">← Back</a>
+    <a href="index.html" class="nav-logo"><img src="Screenshot 2026-06-04 130225.png" alt="Sport Sight" /></a>
+    <span class="nav-title">Configure</span>
+  </nav>
+
+  <div class="configurator">
+
+    <!-- PREVIEW -->
+    <div class="preview-panel">
+      <div class="preview-bg"></div>
+      <div class="preview-label">Live Preview</div>
+      <div class="glasses-canvas">
+        <div class="glasses-svg-wrap">
+          <!-- SVG glasses based on the product shape -->
+          <svg id="glassesPreview" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- Frame shadow -->
+            <ellipse cx="300" cy="260" rx="200" ry="12" fill="rgba(0,0,0,0.5)"/>
+            <!-- Temple arms -->
+            <path id="templeLeft" d="M 60 120 L 10 160 L 8 185 L 20 185 L 24 162 L 72 128 Z" fill="#1a1a1a"/>
+            <path id="templeRight" d="M 540 120 L 590 160 L 592 185 L 580 185 L 576 162 L 528 128 Z" fill="#1a1a1a"/>
+            <!-- Nose bridge -->
+            <path id="bridge" d="M 255 155 Q 300 170 345 155" stroke="#1a1a1a" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <!-- Main lens area - single shield style -->
+            <path id="mainLens"
+              d="M 60 118 Q 60 60 120 50 L 480 50 Q 540 60 540 118 Q 540 165 480 175 L 345 155 Q 300 168 255 155 L 120 175 Q 60 165 60 118 Z"
+              fill="rgba(0,100,220,0.75)" opacity="0.9"/>
+            <!-- Lens shine -->
+            <path d="M 100 65 Q 200 58 300 62 Q 200 72 100 75 Z" fill="rgba(255,255,255,0.12)"/>
+            <path d="M 300 62 Q 400 58 500 65 Q 400 72 300 72 Z" fill="rgba(255,255,255,0.08)"/>
+            <!-- Frame border -->
+            <path id="frameBorder"
+              d="M 60 118 Q 60 60 120 50 L 480 50 Q 540 60 540 118 Q 540 165 480 175 L 345 155 Q 300 168 255 155 L 120 175 Q 60 165 60 118 Z"
+              fill="none" stroke="#1a1a1a" stroke-width="10"/>
+            <!-- Nose pieces -->
+            <ellipse cx="265" cy="165" rx="8" ry="5" fill="#222"/>
+            <ellipse cx="335" cy="165" rx="8" ry="5" fill="#222"/>
+            <!-- Brand text -->
+            <text x="300" y="108" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="700" fill="rgba(255,255,255,0.25)" letter-spacing="8">SPORT SIGHT</text>
+          </svg>
+        </div>
+
+        <!-- STRAP SVG -->
+        <svg id="strapSvg" viewBox="0 0 500 60" xmlns="http://www.w3.org/2000/svg" style="margin-top:-4px;">
+          <!-- Left strap arm -->
+          <path id="strapLeft" d="M 20 5 L 170 20 L 170 40 L 20 55 Z" fill="#333" rx="4"/>
+          <!-- Right strap arm -->
+          <path id="strapRight" d="M 480 5 L 330 20 L 330 40 L 480 55 Z" fill="#333" rx="4"/>
+          <!-- Main strap band -->
+          <rect id="strapBand" x="170" y="18" width="160" height="24" rx="12" fill="#333"/>
+          <!-- Strap texture lines -->
+          <line x1="200" y1="22" x2="200" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="220" y1="22" x2="220" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="240" y1="22" x2="240" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="260" y1="22" x2="260" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="280" y1="22" x2="280" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="300" y1="22" x2="300" y2="38" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        </svg>
+
+        <div class="preview-name">
+          <div class="model">Sport Sight — <span id="previewModel">Pro Series</span></div>
+          <div class="config" id="previewConfig">Matte Black / Blue Mirror / Black Strap</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTIONS -->
+    <div class="options-panel">
+      <div class="config-header">
+        <div class="eyebrow">Configure Your Pair</div>
+        <h1>BUILD<br /><em>YOURS</em></h1>
+        <p>Every detail, exactly as you want it. Built to your spec.</p>
+      </div>
+
+      <!-- FRAME COLOUR -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Frame Colour</span>
+          <span class="section-selected" id="frameLabel">Matte Black</span>
+        </div>
+        <div class="swatches" id="frameSwatches">
+          <button class="swatch-btn active" style="background:#1a1a1a;" data-color="#1a1a1a" data-name="Matte Black" data-target="frame" title="Matte Black"></button>
+          <button class="swatch-btn" style="background:#2a2a2a;border:1px solid #444;" data-color="#2a2a2a" data-name="Graphite" data-target="frame" title="Graphite"></button>
+          <button class="swatch-btn" style="background:#f0f0f0;" data-color="#f0f0f0" data-name="Crystal White" data-target="frame" title="Crystal White"></button>
+          <button class="swatch-btn" style="background:linear-gradient(135deg,#1a1a1a,#555);" data-color="#333" data-name="Carbon" data-target="frame" title="Carbon"></button>
+          <button class="swatch-btn" style="background:#8B0000;" data-color="#8B0000" data-name="Crimson" data-target="frame" title="Crimson"></button>
+          <button class="swatch-btn" style="background:#003366;" data-color="#003366" data-name="Navy" data-target="frame" title="Navy"></button>
+          <button class="swatch-btn" style="background:#1a4a1a;" data-color="#1a4a1a" data-name="Forest" data-target="frame" title="Forest"></button>
+          <button class="swatch-btn" style="background:linear-gradient(135deg,#b8860b,#ffd700);" data-color="#b8860b" data-name="Gold" data-target="frame" title="Gold"></button>
+        </div>
+      </div>
+
+      <!-- LENS TINT -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Lens Tint</span>
+          <span class="section-selected" id="lensLabel">Blue Mirror</span>
+        </div>
+        <div class="lens-options" id="lensOptions">
+          <button class="lens-btn active" data-lens="blue" data-name="Blue Mirror" data-price="0" data-color="rgba(0,100,220,0.75)" data-shine="rgba(100,180,255,0.3)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#0066cc,#00aaff);"></span>
+            <div class="lens-name">Blue Mirror</div>
+            <div class="lens-price">Included</div>
+          </button>
+          <button class="lens-btn" data-lens="smoke" data-name="Smoke" data-price="0" data-color="rgba(30,30,30,0.82)" data-shine="rgba(255,255,255,0.08)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#222,#555);"></span>
+            <div class="lens-name">Smoke</div>
+            <div class="lens-price">Included</div>
+          </button>
+          <button class="lens-btn" data-lens="fire" data-name="Fire Mirror" data-price="20" data-color="rgba(200,60,0,0.75)" data-shine="rgba(255,150,50,0.3)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#cc3300,#ff6600);"></span>
+            <div class="lens-name">Fire Mirror</div>
+            <div class="lens-price">+$20</div>
+          </button>
+          <button class="lens-btn" data-lens="gold" data-name="Gold Mirror" data-price="20" data-color="rgba(180,130,0,0.75)" data-shine="rgba(255,220,80,0.3)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#b38600,#ffd700);"></span>
+            <div class="lens-name">Gold Mirror</div>
+            <div class="lens-price">+$20</div>
+          </button>
+          <button class="lens-btn" data-lens="green" data-name="Green Mirror" data-price="20" data-color="rgba(0,130,60,0.75)" data-shine="rgba(80,255,140,0.25)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#006633,#00cc66);"></span>
+            <div class="lens-name">Green Mirror</div>
+            <div class="lens-price">+$20</div>
+          </button>
+          <button class="lens-btn" data-lens="clear" data-name="Clear" data-price="0" data-color="rgba(200,230,255,0.15)" data-shine="rgba(255,255,255,0.1)">
+            <span class="lens-dot" style="background:linear-gradient(135deg,rgba(200,230,255,0.3),rgba(255,255,255,0.5));border:1px solid #333;"></span>
+            <div class="lens-name">Clear</div>
+            <div class="lens-price">Included</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- SPORT STRAP -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Sport Strap</span>
+          <span class="section-selected" id="strapLabel">Standard Black</span>
+        </div>
+        <div class="strap-options" id="strapOptions">
+          <button class="strap-btn active" data-strap="black" data-name="Standard Black" data-price="0" data-color="#222">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:#222;border:1px solid #444;"></span>
+              <div>
+                <div class="strap-name">Standard Black</div>
+                <div class="strap-detail">Silicone grip, adjustable</div>
+              </div>
+            </div>
+            <span class="strap-price">Included</span>
+          </button>
+          <button class="strap-btn" data-strap="white" data-name="Arctic White" data-price="0" data-color="#e8e8e8">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:#e8e8e8;"></span>
+              <div>
+                <div class="strap-name">Arctic White</div>
+                <div class="strap-detail">Silicone grip, adjustable</div>
+              </div>
+            </div>
+            <span class="strap-price">Included</span>
+          </button>
+          <button class="strap-btn" data-strap="red" data-name="Race Red" data-price="15" data-color="#cc2200">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:#cc2200;"></span>
+              <div>
+                <div class="strap-name">Race Red</div>
+                <div class="strap-detail">Premium silicone, grip texture</div>
+              </div>
+            </div>
+            <span class="strap-price">+$15</span>
+          </button>
+          <button class="strap-btn" data-strap="blue" data-name="Electric Blue" data-price="15" data-color="#1155cc">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:#1155cc;"></span>
+              <div>
+                <div class="strap-name">Electric Blue</div>
+                <div class="strap-detail">Premium silicone, grip texture</div>
+              </div>
+            </div>
+            <span class="strap-price">+$15</span>
+          </button>
+          <button class="strap-btn" data-strap="neon" data-name="Neon Yellow" data-price="15" data-color="#ccdd00">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:#ccdd00;"></span>
+              <div>
+                <div class="strap-name">Neon Yellow</div>
+                <div class="strap-detail">High-vis premium silicone</div>
+              </div>
+            </div>
+            <span class="strap-price">+$15</span>
+          </button>
+          <button class="strap-btn" data-strap="camo" data-name="Camo Series" data-price="25" data-color="#4a5a3a">
+            <div class="strap-info">
+              <span class="strap-swatch" style="background:linear-gradient(90deg,#3a4a2a 0%,#5a6a4a 33%,#2a3a1a 66%,#4a5a3a 100%);"></span>
+              <div>
+                <div class="strap-name">Camo Series</div>
+                <div class="strap-detail">Limited edition patterned strap</div>
+              </div>
+            </div>
+            <span class="strap-price">+$25</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STRAP MATERIAL -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Strap Material</span>
+          <span class="section-selected" id="strapMatLabel">Silicone Grip</span>
+        </div>
+        <div class="lens-options" id="strapMatOptions">
+          <button class="lens-btn active" data-mat="silicone" data-name="Silicone Grip" data-price="0">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#2a2a2a,#444);"></span>
+            <div class="lens-name">Silicone Grip</div>
+            <div class="lens-price">Included</div>
+          </button>
+          <button class="lens-btn" data-mat="neoprene" data-name="Neoprene" data-price="10">
+            <span class="lens-dot" style="background:linear-gradient(135deg,#1a1a2e,#333);"></span>
+            <div class="lens-name">Neoprene</div>
+            <div class="lens-price">+$10</div>
+          </button>
+          <button class="lens-btn" data-mat="elastic" data-name="Woven Elastic" data-price="15">
+            <span class="lens-dot" style="background:repeating-linear-gradient(45deg,#333 0px,#333 2px,#222 2px,#222 6px);"></span>
+            <div class="lens-name">Woven Elastic</div>
+            <div class="lens-price">+$15</div>
+          </button>
+          <button class="lens-btn" data-mat="mesh" data-name="Mesh Ventilated" data-price="20">
+            <span class="lens-dot" style="background:repeating-linear-gradient(0deg,#2a2a2a 0px,#2a2a2a 1px,transparent 1px,transparent 4px),repeating-linear-gradient(90deg,#2a2a2a 0px,#2a2a2a 1px,transparent 1px,transparent 4px);background-color:#111;"></span>
+            <div class="lens-name">Mesh Ventilated</div>
+            <div class="lens-price">+$20</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- EXTRAS -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Add-Ons</span>
+        </div>
+        <div class="extras-grid" id="extrasGrid">
+          <button class="extra-btn" data-extra="case" data-name="Hard Case" data-price="25">
+            <span class="extra-icon">🧳</span>
+            <div class="extra-name">Hard Case</div>
+            <div class="extra-desc">Rigid carry case with magnetic clasp</div>
+            <div class="extra-price">+$25</div>
+          </button>
+          <button class="extra-btn" data-extra="lens2" data-name="Extra Lens Set" data-price="45">
+            <span class="extra-icon">🔄</span>
+            <div class="extra-name">Extra Lens Set</div>
+            <div class="extra-desc">Second lens included in case</div>
+            <div class="extra-price">+$45</div>
+          </button>
+          <button class="extra-btn" data-extra="cloth" data-name="Microfibre Bag" data-price="15">
+            <span class="extra-icon">🎽</span>
+            <div class="extra-name">Microfibre Bag</div>
+            <div class="extra-desc">Soft pouch doubles as lens cloth</div>
+            <div class="extra-price">+$15</div>
+          </button>
+          <button class="extra-btn" data-extra="cord" data-name="Neck Cord" data-price="10">
+            <span class="extra-icon">🔗</span>
+            <div class="extra-name">Neck Cord</div>
+            <div class="extra-desc">Adjustable silicone retention cord</div>
+            <div class="extra-price">+$10</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- ENGRAVING -->
+      <div class="config-section">
+        <div class="section-head">
+          <span class="section-title">Temple Engraving</span>
+          <span class="section-price-add">+$30</span>
+        </div>
+        <div class="engrave-input-wrap">
+          <input type="text" class="engrave-input" id="engravingInput" placeholder="e.g. YOUR NAME or TEAM 2026" maxlength="16" />
+          <span class="engrave-count" id="engravingCount">0/16</span>
+        </div>
+        <div class="engrave-price" id="engravingPrice" style="display:none;">Engraving added — +$30</div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="order-summary">
+        <div class="summary-title">Order Summary</div>
+        <div class="summary-rows" id="summaryRows">
+          <div class="summary-row"><span class="lbl">Base Frame</span><span class="val">$300</span></div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-total">
+          <span class="lbl">Total</span>
+          <span class="val" id="totalPrice">$300</span>
+        </div>
+      </div>
+
+      <button class="btn-order" id="orderBtn">Reserve Your Pair →</button>
+      <div class="order-note">No charge today. Secure your configuration. Payment at launch.</div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon">✦</div>
+    <h2>ORDER<br /><em>CONFIRMED</em></h2>
+    <p>Your Sport Sight configuration has been reserved. We'll be in touch before launch with your exclusive pre-order details.</p>
+    <div class="success-order-num" id="successOrderNum">Order #SS-000000</div>
+    <a href="index.html" class="btn-back-home">← Back to Sport Sight</a>
+  </div>
+
+  <script>
+    // CURSOR
+    const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+    (function a(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cur2.style.left=rx+'px';cur2.style.top=ry+'px';requestAnimationFrame(a);})();
+
+    // STATE
+    let state = {
+      frameColor: '#1a1a1a', frameName: 'Matte Black',
+      lensColor: 'rgba(0,100,220,0.75)', lensShine: 'rgba(100,180,255,0.3)', lensName: 'Blue Mirror', lensPrice: 0,
+      strapColor: '#222', strapName: 'Standard Black', strapPrice: 0,
+      strapMat: 'Silicone Grip', strapMatPrice: 0,
+      extras: {}, engravingText: '', engravingPrice: 0,
+      base: 300
+    };
+
+    function getTotal() {
+      let t = state.base + state.lensPrice + state.strapPrice + state.strapMatPrice + state.engravingPrice;
+      Object.values(state.extras).forEach(p => t += p);
+      return t;
+    }
+
+    function updateSummary() {
+      const rows = document.getElementById('summaryRows');
+      let html = `<div class="summary-row"><span class="lbl">Base Frame (${state.frameName})</span><span class="val">$300</span></div>`;
+      if (state.lensPrice > 0) html += `<div class="summary-row"><span class="lbl">Lens: ${state.lensName}</span><span class="val">+$${state.lensPrice}</span></div>`;
+      if (state.strapPrice > 0) html += `<div class="summary-row"><span class="lbl">Strap: ${state.strapName}</span><span class="val">+$${state.strapPrice}</span></div>`;
+      if (state.strapMatPrice > 0) html += `<div class="summary-row"><span class="lbl">Strap Material: ${state.strapMat}</span><span class="val">+$${state.strapMatPrice}</span></div>`;
+      Object.entries(state.extras).forEach(([k,v]) => {
+        if (v > 0) html += `<div class="summary-row"><span class="lbl">${k}</span><span class="val">+$${v}</span></div>`;
+      });
+      if (state.engravingPrice > 0) html += `<div class="summary-row"><span class="lbl">Engraving: "${state.engravingText}"</span><span class="val">+$30</span></div>`;
+      rows.innerHTML = html;
+      document.getElementById('totalPrice').textContent = '$' + getTotal();
+    }
+
+    function updatePreview() {
+      // Frame / temple colour
+      ['templeLeft','templeRight','bridge','frameBorder'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('fill', state.frameColor);
+        if (id === 'bridge' || id === 'frameBorder') {
+          el.setAttribute('stroke', state.frameColor);
+          if (id === 'frameBorder') el.setAttribute('fill', 'none');
+        }
+      });
+      // Lens colour
+      const lens = document.getElementById('mainLens');
+      if (lens) lens.setAttribute('fill', state.lensColor);
+      // Strap colour
+      ['strapLeft','strapRight','strapBand'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('fill', state.strapColor);
+      });
+      // Preview config text
+      document.getElementById('previewConfig').textContent = `${state.frameName} / ${state.lensName} / ${state.strapName}`;
+    }
+
+    // FRAME SWATCHES
+    document.getElementById('frameSwatches').addEventListener('click', e => {
+      const btn = e.target.closest('.swatch-btn');
+      if (!btn) return;
+      document.querySelectorAll('#frameSwatches .swatch-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.frameColor = btn.dataset.color;
+      state.frameName = btn.dataset.name;
+      document.getElementById('frameLabel').textContent = state.frameName;
+      updatePreview(); updateSummary();
+    });
+
+    // LENS OPTIONS
+    document.getElementById('lensOptions').addEventListener('click', e => {
+      const btn = e.target.closest('.lens-btn');
+      if (!btn) return;
+      document.querySelectorAll('#lensOptions .lens-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.lensColor = btn.dataset.color;
+      state.lensShine = btn.dataset.shine;
+      state.lensName = btn.dataset.name;
+      state.lensPrice = parseInt(btn.dataset.price);
+      document.getElementById('lensLabel').textContent = state.lensName;
+      updatePreview(); updateSummary();
+    });
+
+    // STRAP COLOUR
+    document.getElementById('strapOptions').addEventListener('click', e => {
+      const btn = e.target.closest('.strap-btn');
+      if (!btn) return;
+      document.querySelectorAll('#strapOptions .strap-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.strapColor = btn.dataset.color;
+      state.strapName = btn.dataset.name;
+      state.strapPrice = parseInt(btn.dataset.price);
+      document.getElementById('strapLabel').textContent = state.strapName;
+      updatePreview(); updateSummary();
+    });
+
+    // STRAP MATERIAL
+    document.getElementById('strapMatOptions').addEventListener('click', e => {
+      const btn = e.target.closest('.lens-btn');
+      if (!btn) return;
+      document.querySelectorAll('#strapMatOptions .lens-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.strapMat = btn.dataset.name;
+      state.strapMatPrice = parseInt(btn.dataset.price);
+      document.getElementById('strapMatLabel').textContent = state.strapMat;
+      updateSummary();
+    });
+
+    // EXTRAS
+    document.getElementById('extrasGrid').addEventListener('click', e => {
+      const btn = e.target.closest('.extra-btn');
+      if (!btn) return;
+      btn.classList.toggle('active');
+      const name = btn.dataset.name, price = parseInt(btn.dataset.price);
+      if (btn.classList.contains('active')) state.extras[name] = price;
+      else delete state.extras[name];
+      updateSummary();
+    });
+
+    // ENGRAVING
+    const engInput = document.getElementById('engravingInput');
+    engInput.addEventListener('input', () => {
+      const v = engInput.value.toUpperCase();
+      engInput.value = v;
+      document.getElementById('engravingCount').textContent = v.length + '/16';
+      state.engravingText = v;
+      state.engravingPrice = v.length > 0 ? 30 : 0;
+      document.getElementById('engravingPrice').style.display = v.length > 0 ? 'block' : 'none';
+      updateSummary();
+    });
+
+    // ORDER
+    document.getElementById('orderBtn').addEventListener('click', () => {
+      const num = 'SS-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('successOrderNum').textContent = 'Order #' + num;
+      document.getElementById('successOverlay').classList.add('show');
+    });
+
+    updatePreview();
+    updateSummary();
+  </script>
+</body>
+</html>
